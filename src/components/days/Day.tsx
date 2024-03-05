@@ -42,7 +42,7 @@ const data: Data = [
         text: ["Requirement"],
       },
       {
-        contentTitle: "Knowledge learned",
+        contentTitle: "Knowledge Learned",
         text: ["Knowledge learned"],
         code: [
           {

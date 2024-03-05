@@ -1,5 +1,3 @@
-import { useState, useEffect } from "react";
-
 import Menu from "./components/Menu";
 import learningAssignments from "./data/learningAssignments";
 

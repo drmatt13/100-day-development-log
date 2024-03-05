@@ -41,6 +41,19 @@ const data: Data = [
         contentTitle: "Requirement",
         text: ["Requirement"],
       },
+      {
+        contentTitle: "Knowledge learned",
+        text: ["Knowledge learned"],
+        code: [
+          {
+            language: "c",
+            description: [""],
+            text: `
+            
+            `,
+          },
+        ],
+      },
     ],
   },
   // Portfolio Work

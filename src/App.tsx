@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 import Menu from "./components/Menu";
 import learningAssignments from "./data/learningAssignments";
 
@@ -23,7 +25,7 @@ import learningAssignments from "./data/learningAssignments";
 function App() {
   return (
     <>
-      <div className="relative h-dvh w-screen overflow-y-scroll font-mono p-[4vw] sm:p-6 md:p-8 lg:p-9 xl:p-10 bg-[#212121] text-white">
+      <div className="relative top-0 h-dvh w-screen overflow-y-scroll font-mono p-[4vw] sm:p-6 md:p-8 lg:p-9 xl:p-10 bg-[#212121] text-white">
         <div className="max-w-6xl mx-auto">
           <header className="flex justify-between /text-gray-200">
             <p className="text-xl">100 days of development</p>
@@ -38,6 +40,7 @@ function App() {
               </p>
             </div>
           </header>
+
           <Menu open={false} title="About me" top={true}>
             <p className="mt-4 ml-12">
               My name is Matthew, last year I graduated from Southern New
@@ -126,10 +129,7 @@ function App() {
             </p>
           </Menu>
           <Menu day={1} date="3/4/24" />
-          <Menu day={1} date="3/5/24" />
-          <Menu day={1} date="3/6/24" />
-          <Menu day={1} date="3/7/24" />
-          <Menu day={1} date="3/8/24" />
+          <Menu day={2} date="3/5/24" />
         </div>
       </div>
     </>

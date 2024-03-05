@@ -1,11 +1,40 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import hljs from "highlight.js";
 import Button from "./Button";
 
 import type Data from "../types/data";
 
+const ImageModal = ({
+  image,
+  setImage,
+}: {
+  image: string;
+  setImage: Dispatch<SetStateAction<string>>;
+}) => {
+  if (!image) return null;
+
+  return createPortal(
+    <div className="fixed top-0 z-10 h-full w-full bg-black/50 backdrop-blur-lg">
+      <div
+        className="absolute top-0 left-0 w-full h-full"
+        onClick={() => setImage("")}
+      />
+      <div className="h-full w-full flex justify-center items-center">
+        <img
+          className="max-w-[90%] max-h-full object-contain cursor-pointer rounded-lg"
+          src={image}
+          alt={image}
+        />
+      </div>
+    </div>,
+    document.getElementById("modal") as HTMLDivElement
+  );
+};
+
 const DayLayout = ({ data }: { data: Data }) => {
   const [isOpen, setIsOpen] = useState<boolean[]>([]);
+  const [image, setImage] = useState("");
 
   useEffect(() => {
     if (data.length === isOpen.length) return;
@@ -18,6 +47,7 @@ const DayLayout = ({ data }: { data: Data }) => {
 
   return (
     <div>
+      <ImageModal image={image} setImage={setImage} />
       {data.map((item, index) => (
         <div key={index} className="flex">
           <div className="w-12 flex flex-col shrink-0">
@@ -38,7 +68,7 @@ const DayLayout = ({ data }: { data: Data }) => {
 
           <div className="flex flex-col mt-10 sm:mt-12">
             <div className="flex items-center shrink-0">
-              <div className="h-full translate-y-1">
+              <div className="h-full translate-y-1 flex flex-col">
                 <Button
                   isOpen={Boolean(isOpen[index])}
                   setIsOpen={() =>
@@ -47,6 +77,11 @@ const DayLayout = ({ data }: { data: Data }) => {
                     )
                   }
                 />
+                <div className="flex-1">
+                  {isOpen[index] && (
+                    <div className="ml-3 h-full w-[60%] border-gray-400 border-l"></div>
+                  )}
+                </div>
               </div>
               <p className="text-lg font-bold">
                 {item.title}
@@ -57,7 +92,7 @@ const DayLayout = ({ data }: { data: Data }) => {
               <div>
                 {item.content.map((content, index) => (
                   <div key={index} className="flex">
-                    <div className="w-12 shrink-0 will-change-transform">
+                    <div className="w-12 shrink-0 /will-change-transform">
                       <div className="relative h-12 flex">
                         <div
                           className={`${
@@ -104,15 +139,16 @@ const DayLayout = ({ data }: { data: Data }) => {
                         </div>
                       ))}
                       {content.images && (
-                        <div className="mt-4 flex flex-wrap">
+                        <div className="mt-4 flex flex-wrap flex-col sm:flex-row">
                           {content.images.map((image, index) => (
                             <img
                               key={index}
                               src={image}
                               alt="image"
+                              onClick={() => setImage(image)}
                               className={`${
                                 content.images?.length === 1 ? "w-max" : "w-64"
-                              } h-64 object-cover rounded-lg mr-4 mb-4 cursor-pointer border border-white/25`}
+                              } w-96 max-w-full sm:w-64 sm:h-64 object-cover rounded-lg mr-4 mb-4 cursor-pointer border border-white/25`}
                             />
                           ))}
                         </div>
@@ -130,102 +166,3 @@ const DayLayout = ({ data }: { data: Data }) => {
 };
 
 export default DayLayout;
-
-{
-  /* 
-  <div className="mt-8 flex flex-col">
-    <p className="text-lg font-bold text-white">Assignment:</p>
-    <p className="mt-4">{item.assignment}</p>
-  </div>
-  
-  
-  <pre className="mt-1 relative whitespace-pre-wrap bg-[#263238] p-6 rounded-lg text-white w-max max-w-full">
-  <code
-    dangerouslySetInnerHTML={{
-      __html: hljs
-        .highlight(item.code.content, {
-          language: item.code.language,
-        })
-        .value.trim(),
-    }}
-  ></code>
-</pre>; 
-*/
-}
-
-// {content.learningAssignment?.objective && (
-//   <div className="mt-8 flex flex-col">
-//     <p className="text-lg font-bold text-white">
-//       Objective:
-//     </p>
-//     <p className="mt-4">
-//       {content.learningAssignment?.objective}
-//     </p>
-//   </div>
-// )}
-// {content.learningAssignment?.requirement && (
-//   <div className="mt-8 flex flex-col">
-//     <p className="text-lg font-bold text-white">
-//       Requirement:
-//     </p>
-//     <p className="mt-4">
-//       {content.learningAssignment?.requirement}
-//     </p>
-//   </div>
-// )}
-// {content.code && (
-//   <div className="mt-8 flex flex-col">
-//     <p className="text-lg font-bold text-white">Code:</p>
-//     <pre className="mt-4 relative whitespace-pre-wrap bg-[#263238] p-6 rounded-lg text-white w-full">
-//       <code
-//         dangerouslySetInnerHTML={{
-//           __html: hljs
-//             .highlight(content.code.text, {
-//               language: content.code.language,
-//             })
-//             .value.trim(),
-//         }}
-//       ></code>
-//     </pre>
-//   </div>
-// )}
-// {content.comments && (
-//   <div className="mt-8 flex flex-col">
-//     <p className="text-lg font-bold text-white">
-//       Comments:
-//     </p>
-//     <p className="mt-4 whitespace-pre-wrap">
-//       {content.comments}
-//     </p>
-//   </div>
-// )}
-// {content.statement && (
-//   <div className="mt-8 flex flex-col">
-//     <p className="text-lg font-bold text-white">
-//       Statement:
-//     </p>
-//     <p className="mt-4 whitespace-pre-wrap">
-//       {content.statement.trim()}
-//     </p>
-//   </div>
-// )}
-// {content.notes && (
-//   <div className="mt-8 flex flex-col">
-//     <p className="text-lg font-bold text-white">Notes:</p>
-//     <p className="mt-4 whitespace-pre-wrap">
-//       {content.notes.trim()}
-//     </p>
-//   </div>
-// )}
-// {content.images && (
-//   <div className="mt-8 flex flex-wrap">
-//     {content.images.map((image, index) => (
-//       <img
-//         key={index}
-//         src={image}
-//         alt="image"
-//         className="w-32 h-32 object-cover rounded-lg mr-4 mb-4 cursor-pointer"
-//       />
-//     ))}
-//   </div>
-// )}

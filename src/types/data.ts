@@ -16,7 +16,8 @@ type Data = Array<{
       | "Objective"
       | "Requirement"
       | "Notes"
-      | "Knowledge learned"
+      | "Knowledge Learned"
+      | "Concepts Explored"
       | "Code"
       | "Images";
     text?: string[];

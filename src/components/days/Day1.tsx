@@ -180,7 +180,7 @@ function groupAnagrams(strs: string[]): string[][] {
         ],
       },
       {
-        contentTitle: "Knowledge learned",
+        contentTitle: "Knowledge Learned",
         code: [
           {
             description: [
@@ -374,7 +374,7 @@ int main() {
           "Worked on rapidly getting this* website in a functional state so that I can start adding daily content.",
           "This website is a work in progress. I plan to keep it more or less barebones and just add features as I need them.",
           "I've Decided that each menu item will be lazy loaded to improve performance and reduce initial load time. Check the network tab in the dev tools as you open and close top level menu items if you're interested in seeing the lazy loading in action.",
-          `Furthermore, I reverse engineered the way Facebook expands it's comment section "notably, the flowing border lines which traverse downward to expanded content" by eye and implemented it here by using react useState with tailwindCSS.`,
+          `Furthermore, I reverse engineered the way Facebook expands it's comment section "notably, the flowing border lines that traverse downward to expanded content" by eye and implemented it here by using react useState with tailwindCSS.`,
           "I generated some dummy data to test the layout and functionality of the website and I'm happy with the results.",
         ],
         images: ["/day1/1.png", "/day1/2.png", "/day1/3.png"],

@@ -17,12 +17,9 @@ interface LazyComponentsMap {
 }
 
 // Create a components map that returns a dynamic import for each day
-const lazyComponents: LazyComponentsMap = Object.fromEntries(
-  Array.from({ length: 100 }, (_, i) => [
-    i + 1,
-    () => import(`./days/Day${i + 1}`), // Dynamic import for each component
-  ])
-) as LazyComponentsMap;
+const lazyComponents: LazyComponentsMap = {
+  1: () => import("./days/Day1"),
+};
 
 const Menu = ({ title, children, open, top, day, date }: Props) => {
   const [isOpen, setIsOpen] = useState(open);

@@ -21,7 +21,7 @@ const DayLayout = ({ data }: { data: Data }) => {
       {data.map((item, index) => (
         <div key={index} className="flex">
           <div className="w-12 flex flex-col shrink-0">
-            <div className="relative h-12 sm:h-16 flex">
+            <div className="relative h-14 sm:h-16 flex">
               <div
                 className={`${
                   index !== data.length - 1 && "h-2"
@@ -36,7 +36,7 @@ const DayLayout = ({ data }: { data: Data }) => {
             )}
           </div>
 
-          <div className="flex flex-col mt-8 sm:mt-12">
+          <div className="flex flex-col mt-10 sm:mt-12">
             <div className="flex items-center shrink-0">
               <div className="h-full translate-y-1">
                 <Button

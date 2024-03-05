@@ -26,7 +26,9 @@ const Menu = ({ title, children, open, top, day, date }: Props) => {
 
   return (
     <div
-      className={`${top ? "mt-20 lg:mt-24" : "mt-8 sm:mt-12"} flex flex-col`}
+      className={`${
+        top ? "mt-16 sm:mt-20 lg:mt-24" : "mt-8 sm:mt-12"
+      } flex flex-col`}
     >
       <div className="flex items-center">
         <Button isOpen={isOpen} setIsOpen={setIsOpen} />

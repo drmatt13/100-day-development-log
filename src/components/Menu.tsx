@@ -25,7 +25,9 @@ const Menu = ({ title, children, open, top, day, date }: Props) => {
   const [isOpen, setIsOpen] = useState(open);
 
   return (
-    <div className={`${top ? "mt-20 lg:mt-24" : "mt-12"} flex flex-col`}>
+    <div
+      className={`${top ? "mt-20 lg:mt-24" : "mt-8 sm:mt-12"} flex flex-col`}
+    >
       <div className="flex items-center">
         <Button isOpen={isOpen} setIsOpen={setIsOpen} />
         <p className="text-xl truncate">{date ? date : title}</p>

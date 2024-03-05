@@ -21,7 +21,7 @@ const DayLayout = ({ data }: { data: Data }) => {
       {data.map((item, index) => (
         <div key={index} className="flex">
           <div className="w-12 flex flex-col shrink-0">
-            <div className="relative h-16 flex">
+            <div className="relative h-12 sm:h-16 flex">
               <div
                 className={`${
                   index !== data.length - 1 && "h-2"
@@ -36,16 +36,18 @@ const DayLayout = ({ data }: { data: Data }) => {
             )}
           </div>
 
-          <div className="flex flex-col mt-12">
-            <div className="flex items-center">
-              <Button
-                isOpen={Boolean(isOpen[index])}
-                setIsOpen={() =>
-                  setIsOpen((prev) =>
-                    prev.map((_, i) => (i === index ? !prev[i] : prev[i]))
-                  )
-                }
-              />
+          <div className="flex flex-col mt-8 sm:mt-12">
+            <div className="flex items-center shrink-0">
+              <div className="h-full translate-y-1">
+                <Button
+                  isOpen={Boolean(isOpen[index])}
+                  setIsOpen={() =>
+                    setIsOpen((prev) =>
+                      prev.map((_, i) => (i === index ? !prev[i] : prev[i]))
+                    )
+                  }
+                />
+              </div>
               <p className="text-lg font-bold">
                 {item.title}
                 {item.description && <span>: {item.description}</span>}

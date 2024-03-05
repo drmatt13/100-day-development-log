@@ -1,28 +1,11 @@
-// import DOMPurify from "dompurify";
 import { useEffect, useState } from "react";
 import hljs from "highlight.js";
 import Button from "./Button";
 
 import type Data from "../types/data";
 
-// function escapeHtml(text: string): string {
-//   const characterMap: { [key: string]: string } = {
-//     "&": "&amp;",
-//     "<": "&lt;",
-//     ">": "&gt;",
-//     '"': "&quot;",
-//     "'": "&#39;",
-//   };
-//   return text.replace(
-//     /[&<>"']/g,
-//     (character) => characterMap[character] || character
-//   );
-// }
-
 const DayLayout = ({ data }: { data: Data }) => {
   const [isOpen, setIsOpen] = useState<boolean[]>([]);
-
-  // hljs.registerLanguage("javascript", javascript);
 
   useEffect(() => {
     if (data.length === isOpen.length) return;

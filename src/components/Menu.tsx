@@ -1,4 +1,4 @@
-import { ReactNode, useState, lazy, Suspense, Fragment } from "react";
+import React, { ReactNode, useState, lazy, Suspense, Fragment } from "react";
 import Button from "./Button";
 
 interface Props {
@@ -10,7 +10,19 @@ interface Props {
   day?: number;
 }
 
-const components = Array.from({ length: 100 }, (_, i) => i + 1);
+// We'll assume you have 100 days of components
+// Define the type for the lazy loaded components map
+interface LazyComponentsMap {
+  [key: number]: () => Promise<{ default: React.ComponentType<unknown> }>;
+}
+
+// Create a components map that returns a dynamic import for each day
+const lazyComponents: LazyComponentsMap = Object.fromEntries(
+  Array.from({ length: 100 }, (_, i) => [
+    i + 1,
+    () => import(`./days/Day${i + 1}`), // Dynamic import for each component
+  ])
+) as LazyComponentsMap;
 
 const Menu = ({ title, children, open, top, day, date }: Props) => {
   const [isOpen, setIsOpen] = useState(open);
@@ -19,20 +31,17 @@ const Menu = ({ title, children, open, top, day, date }: Props) => {
     <div className={`${top ? "mt-20 lg:mt-24" : "mt-12"} flex flex-col`}>
       <div className="flex items-center">
         <Button isOpen={isOpen} setIsOpen={setIsOpen} />
-        <p className="text-xl truncate">
-          {date ? date : title}
-          {/* {date && <span className="text-xs ml-4">{date}</span>} */}
-        </p>
+        <p className="text-xl truncate">{date ? date : title}</p>
       </div>
       {isOpen && children}
       {isOpen &&
         !children &&
-        components.map((i) => {
-          const LazyComponent = lazy(() => import(`./days/Day${i}`));
+        Array.from({ length: 100 }, (_, i) => i + 1).map((i) => {
+          const LazyComponent = lazy(lazyComponents[i]);
           return (
             <Fragment key={i}>
               {day === i && (
-                <Suspense fallback={<></>}>
+                <Suspense fallback={<div>Loading...</div>}>
                   <LazyComponent />
                 </Suspense>
               )}

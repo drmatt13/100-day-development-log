@@ -84,7 +84,7 @@ const DayLayout = ({ data }: { data: Data }) => {
                 </div>
               </div>
               <p className="text-lg font-bold">
-                {item.title}
+                {item.menu}
                 {item.description && <span>: {item.description}</span>}
               </p>
             </div>
@@ -109,50 +109,51 @@ const DayLayout = ({ data }: { data: Data }) => {
                     </div>
                     <div className="flex flex-col">
                       <p className="mt-8 text-lg text-white">
-                        {item.content[index].contentTitle}
+                        {item.content[index].subMenu}
                       </p>
-                      {content.text?.map((text, index) => (
+                      {content.items?.map((item, index) => (
                         <div key={index} className="mt-4">
-                          <p className="whitespace-pre-wrap">{text}</p>
-                        </div>
-                      ))}
-                      {content.code?.map((code, index) => (
-                        <div key={index} className="mt-4">
-                          {code.description &&
-                            code.description.map((desc, index) => (
+                          {item.text &&
+                            item.text.map((desc, index) => (
                               <div key={index} className="flex items-center">
                                 <p className="mb-4">{desc}</p>
                               </div>
                             ))}
-                          <pre className="relative whitespace-pre-wrap bg-[#263238] p-6 rounded-lg text-white min-w-60 w-full max-w-max pr-10">
-                            <code
-                              className="max-w-full"
-                              dangerouslySetInnerHTML={{
-                                __html: hljs
-                                  .highlight(code.text, {
-                                    language: code.language,
-                                  })
-                                  .value.trim(),
-                              }}
-                            ></code>
-                          </pre>
+                          {item.code && (
+                            <pre className="relative whitespace-pre-wrap bg-[#263238] p-6 rounded-lg text-white min-w-60 w-full max-w-max pr-10">
+                              <code
+                                className="max-w-full"
+                                dangerouslySetInnerHTML={{
+                                  __html: hljs
+                                    .highlight(item.code, {
+                                      language: item.language!,
+                                    })
+                                    .value.trim(),
+                                }}
+                              ></code>
+                            </pre>
+                          )}
+                          {item.images && (
+                            <div
+                              className={`${
+                                content.subMenu !== "Images" && "mt-4"
+                              } flex flex-wrap flex-col sm:flex-row`}
+                            >
+                              {item.images.map((image, index) => (
+                                <img
+                                  key={index}
+                                  src={image}
+                                  alt="image"
+                                  onClick={() => setImage(image)}
+                                  className={`${
+                                    item.images?.length === 1 ? "w-max" : "w-64"
+                                  } w-96 max-w-full sm:w-64 sm:h-64 object-cover rounded-lg mr-4 mb-4 cursor-pointer border border-white/25`}
+                                />
+                              ))}
+                            </div>
+                          )}
                         </div>
                       ))}
-                      {content.images && (
-                        <div className="mt-4 flex flex-wrap flex-col sm:flex-row">
-                          {content.images.map((image, index) => (
-                            <img
-                              key={index}
-                              src={image}
-                              alt="image"
-                              onClick={() => setImage(image)}
-                              className={`${
-                                content.images?.length === 1 ? "w-max" : "w-64"
-                              } w-96 max-w-full sm:w-64 sm:h-64 object-cover rounded-lg mr-4 mb-4 cursor-pointer border border-white/25`}
-                            />
-                          ))}
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))}

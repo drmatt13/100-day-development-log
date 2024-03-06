@@ -4,15 +4,15 @@ import Data from "../../types/data";
 const data: Data = [
   // LeetCode
   {
-    title: "LeetCode",
+    menu: "LeetCode",
     description: "Problem NAME",
     content: [
       {
-        contentTitle: "Code",
-        code: [
+        subMenu: "Code",
+        items: [
           {
             language: "typescript",
-            text: `function twoSum(nums: number[], target: number): number[] {}`,
+            code: `function twoSum(nums: number[], target: number): number[] {}`,
           },
         ],
       },
@@ -20,35 +20,34 @@ const data: Data = [
   },
   // AWS Practice
   {
-    title: "AWS Practice",
+    menu: "AWS Practice",
     content: [
       {
-        contentTitle: "Comments",
-        text: [`Comment`],
+        subMenu: "Comments",
+        items: [{ text: ["text1", "text2"] }],
       },
     ],
   },
   // Learning Assignment
   {
-    title: "Learning Assignment",
+    menu: "Learning Assignment",
     description: "Description",
     content: [
       {
-        contentTitle: "Objective",
-        text: ["Objective"],
+        subMenu: "Objective",
+        items: [{ text: ["Objective"] }],
       },
       {
-        contentTitle: "Requirement",
-        text: ["Requirement"],
+        subMenu: "Requirement",
+        items: [{ text: ["Requirement"] }],
       },
       {
-        contentTitle: "Knowledge Learned",
-        text: ["Knowledge learned"],
-        code: [
+        subMenu: "Knowledge Learned",
+        items: [
+          { text: ["text1", "text2"] },
           {
             language: "c",
-            description: [""],
-            text: `
+            code: `
             
             `,
           },
@@ -58,11 +57,11 @@ const data: Data = [
   },
   // Portfolio Work
   {
-    title: "Portfolio Work",
+    menu: "Portfolio Work",
     content: [
       {
-        contentTitle: "Comments",
-        text: ["Comment"],
+        subMenu: "Comments",
+        items: [{ text: ["text1", "text2"] }],
       },
     ],
   },

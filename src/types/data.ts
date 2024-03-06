@@ -1,5 +1,5 @@
 type Data = Array<{
-  title:
+  menu:
     | "Learning Assignment"
     | "LeetCode"
     | "AWS Study"
@@ -11,7 +11,7 @@ type Data = Array<{
     | "Arbitrary Study";
   description?: string;
   content: Array<{
-    contentTitle:
+    subMenu:
       | "Comments"
       | "Objective"
       | "Requirement"
@@ -19,11 +19,17 @@ type Data = Array<{
       | "Knowledge Learned"
       | "Concepts Explored"
       | "Code"
-      | "Images";
-    text?: string[];
-    code?: {
-      description?: string[];
-      language:
+      | "Images"
+      | "Resources"
+      | "Commands"
+      | "Configuration"
+      | "Practice"
+      | "Conclusion"
+      | "Summary"
+      | "Context";
+    items: {
+      text?: string[];
+      language?:
         | "javascript"
         | "typescript"
         | "python"
@@ -42,9 +48,9 @@ type Data = Array<{
         | "graphql"
         | "sql"
         | "dockerfile";
-      text: string;
+      code?: string;
+      images?: string[];
     }[];
-    images?: string[];
   }>;
 }>;
 

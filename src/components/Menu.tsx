@@ -41,7 +41,10 @@ const Menu = ({ title, children, open, top, day, date }: Props) => {
     >
       <div className="flex items-center">
         <Button isOpen={isOpen} setIsOpen={setIsOpen} />
-        <p className="text-xl truncate">{date ? date : title}</p>
+        <p className="text-xl truncate">
+          {/* {day && `Day ${day} - `} */}
+          {date ? date : title}
+        </p>
       </div>
       {isOpen && children}
       {isOpen &&

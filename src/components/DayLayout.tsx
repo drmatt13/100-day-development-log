@@ -143,9 +143,9 @@ const DayLayout = ({ data }: { data: Data }) => {
                               </div>
                             ))}
                           {item.code && (
-                            <pre className="relative bg-[#263238] p-6 rounded-lg text-white /min-w-60 /w-full /max-w-60 /pr-10">
+                            <pre className="relative bg-[#263238] p-6 rounded-lg text-white min-w-60 w-full max-w-max /pr-10">
                               <code
-                                className="/w-60 whitespace-pre-wrap"
+                                className="w-60 whitespace-pre-wrap"
                                 dangerouslySetInnerHTML={{
                                   __html: hljs
                                     .highlight(item.code, {

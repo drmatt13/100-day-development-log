@@ -388,6 +388,254 @@ int main() {
     ],
   },
   // Portfolio Work
+
+  {
+    menu: "Portfolio Work",
+    description: "SocketChat ~ Continued",
+    content: [
+      {
+        subMenu: "Notes",
+        items: [
+          {
+            text: [
+              "Note: It's important not to take a long break from your project if you're in the middle of developing a complicated feature. If you pause for too long, you'll face the tough task of rapidly re-familiarizing yourself with the intricate parts of the code.",
+              "Additional Note: I don't expect this section to be entirely clear to follow along with this because I  started this project before I started this dev blog and I wouldnt know where to begin to explain the entire project in a single post. I'm just going to try to explain the parts I'm working on.",
+            ],
+          },
+        ],
+      },
+      {
+        subMenu: "Code",
+        items: [
+          {
+            text: [
+              `I'm working on adding functionality to mark private messages as 'seen' or 'read'. However, I've found that managing the 'seen' and 'read' state names in React can get confusing quickly. This is because the message's sender and receiver can be either "you" or "them," which complicates things.`,
+            ],
+            language: "typescript",
+            code: `
+const [privateMessages, setPrivateMessages] = useState<{
+  [id: string]: {
+    user: User;
+    messages: Message[];
+    seen: boolean;
+    read: boolean;
+  };
+}>({});
+            `,
+          },
+          {
+            text: [
+              "So first things first, I updated the state to reflect the new structure.",
+            ],
+            language: "typescript",
+            code: `
+const [privateMessages, setPrivateMessages] = useState<{
+  [id: string]: {
+    user: User;
+    messages: Message[];
+    ISeenTheirMessage: boolean;
+    TheyReadMyMessage: boolean;
+  };
+}>({});
+            `,
+          },
+          {
+            text: [
+              "Thanks to TypeScript's powerful feature of highlighting errors directly in the GUI, I can easily do a quick refactor and update the privateMessages objects key names across my application before I start implementing the new functionality.",
+            ],
+            images: ["/day3/9.png"],
+          },
+          {
+            text: [
+              "Errors like this are popping up all over the place but that's to be expected.",
+            ],
+            images: ["/day3/10.png"],
+          },
+          {
+            text: [
+              "Jumping back into a complex feature after a break highlights the nuanced landscape of my work. I'm currently navigating through an intricate setup involving multiple components and hooks, notably the 'privateMessages/setPrivateMessages' state, alongside a custom socket hook and a global context. This setup is designed to streamline socket functionalities to the messenger and chat components, all while ensuring seamless integration with a dedicated socket server. It's a process of reacquainting with the system, refining as necessary, and progressively adding new functionalities. This approach exemplifies the balance between understanding existing frameworks, implementing refinements, and advancing the project's capabilities in a professional and methodical manner.",
+              "------",
+              "I went ahead and added a listener for a read event in the SocketIO server. All this does is check if that recipient is online from a serverside cache of active users and if they are, emit a read event to them.",
+            ],
+            language: "typescript",
+            code: `
+socket.on("read", (recipient: User) => {
+  if (!activeUsers[socket.id]) {
+    return;
+  }
+  
+  if (recipient.id) {
+    io.to(recipient.id).emit("read", activeUsers[socket.id]);
+  }
+});
+            `,
+          },
+          {
+            text: [
+              "Next I need to figure out how to implement the 'read' functionality on the client side which will be a bit more complicated than the SocketIO server side",
+            ],
+            language: "typescript",
+            code: `
+interface PrivateMessages {
+  [id: string]: {
+    user: User;
+    messages: Message[];
+    ISeenTheirMessage: boolean;
+    TheyReadMyMessage: boolean;
+  };
+}
+            `,
+          },
+          {
+            text: [
+              "Now before I get carried away with starting to implement this feature, I decided to again quickly refactor the types to make the names more clear and concise.",
+            ],
+            language: "typescript",
+            code: `
+interface PrivateMessages {
+  [id: string]: {
+    user: User;
+    messages: Message[];
+    IReadTheirLastMessage: boolean;
+    TheyReadMyLastMessage: boolean;
+  };
+}
+            `,
+          },
+          {
+            text: [
+              `^ Now everything is in the form of "read", they read my last message, they emit a read event, then I’ll receive a read event, I read their last message, I send a read event, and they receive a read event, etc.`,
+              `In my experience, It's always best to make use of TypeScript and create clear and concise properties and event names with corresponding types to avoid confusion and bugs later on, even if it means a little extra work and redundancy upfront.`,
+              "------",
+              "Next, I'm going to showcase some of the logic for handling sending and recieving a message.",
+              "Sending a message from the client:",
+            ],
+            language: "typescript",
+            code: `
+const submitMessage = useCallback(
+  (message: Message) => socketConnection?.emit("message", message),
+  [socketConnection]
+);
+            `,
+          },
+          {
+            text: [
+              "Recieving a message on the server w/ some added logic for handiling reads:",
+            ],
+
+            language: "typescript",
+            code: `
+socket.on("message", async (message: Message) => {
+  // The server caches actice users locally "If i ever decide to scale this I'll need to use Redis or something similar"
+  // Check if the sender is online and if the message is valid
+  if (
+    !activeUsers[socket.id] ||
+    (!message.text && !message.image && !message.url)
+  ) {
+    return;
+  }
+
+  // There was more logic here to generate a thumbnail for the message if applicable but I'm just going to show the part that emits the message to the recipient for simplicity
+
+  // If the message is not a private message, emit it to everyone
+  if (!message.recipient) io.emit("message", message);
+
+  // If the message is a private message, emit it to the sender and recipient
+  // Unless the recipient is the sender, then only emit it to the sender
+  if (message.recipient) {
+    io.to(socket.id).emit("message", message);
+    message.recipient.id &&
+      socket.id !== message.recipient.id &&
+      io.to(message.recipient.id).emit("message", message);
+  }
+});
+            `,
+          },
+          {
+            text: ["Recieving that message back on the client:"],
+            language: "typescript",
+            code: `
+// Theres alot going in this one
+socketConnection.on("message", (message: Message) => {
+  if (!message.recipient) {
+    if (!chatIdRef.current) playSound("/discord-notification.mp3");
+    setGlobalMessages((prev) => {
+      return [...prev, message];
+    });
+  }
+
+  if (message.recipient) {
+    const privateMessageId =
+      message.sender.id === socketConnection.id
+        ? message.recipient.id!
+        : message.sender.id!;
+    // this means that the frontend user is in the private chat which has the same id as the other user
+    if (chatIdRef.current === privateMessageId)
+      playSound("/discord-notification.mp3");
+    // Pro React tip: use the callback version of setState when you need to update state based on the previous state, you can use logic inside the callback which wouldn't be possible outside of setState
+    setPrivateMessages((prev) => {
+      const newPrivateMessages = { ...prev };
+      if (!newPrivateMessages[privateMessageId])
+        newPrivateMessages[privateMessageId] = {
+          user: message.sender,
+          messages: [],
+          // if the user (you) are in the chat then they (you) must have read the last message
+          IReadTheirLastMessage: chatIdRef.current === privateMessageId,
+          // if (you) didnt send the last message then the sender would have had to have read my last message by default
+          TheyReadMyLastMessage: message.sender.id !== socketConnection.id,
+        };
+      newPrivateMessages[privateMessageId].messages.push(message);
+      return newPrivateMessages;
+    });
+  }
+});
+            `,
+          },
+          {
+            text: [
+              "Next I created some new logic to handle the 'read' event on the client side. Not toally sure if it'll work yet but I'm going to give it a shot.",
+            ],
+            language: "typescript",
+            code: `
+socketConnection.on("read", (user: User) => {
+  // if they read your message them that user must already exist in your local privateMessages cache
+  setPrivateMessages((prev) => {
+    const newPrivateMessages = { ...prev };
+    if (!newPrivateMessages[user.id!])
+      newPrivateMessages[user.id!] = {
+        user,
+        messages: [],
+        // if they are simply telling me that they read my last message then retain the previous value of IReadTheirLastMessage
+        IReadTheirLastMessage:
+          newPrivateMessages[user.id!].IReadTheirLastMessage,
+        TheyReadMyLastMessage: true,
+      };
+    newPrivateMessages[user.id!].IReadTheirLastMessage = true;
+    return newPrivateMessages;
+  });
+});
+            `,
+          },
+          {
+            text: [
+              "And upon the first test (of probably many more), it's giving me a true value for TheyReadMyLastMessage when the receiver was not active in the private chat.",
+            ],
+            images: ["/day3/11.png"],
+          },
+        ],
+      },
+      {
+        subMenu: "Comments",
+        items: [
+          {
+            text: [
+              `Seeing as I'm nearing the end of developing this application and every other feature is battle-tested and working as expected. I'm confident that I can get this feature working as well ("It'll be pretty annoying if I need to continue switching between windows every time I make a slight edit or test which will inturpt my productivity"). I'm going to continue to work on this feature without documenting the rest of the process. But with that said I am excited to hopefully wrap his up soon and move on to the next project. I'll be sure to create a video showcasing the final product along with a detailed write up of the entire project.`,
+            ],
+          },
+        ],
+      },
+    ],
+  },
   {
     menu: "Portfolio Work",
     description: "Code Display Overflowing",
@@ -397,23 +645,9 @@ int main() {
         items: [
           {
             text: [
-              "I know I said I wan't going to comment much on the development of this website but I noticed whe dynamically creating code snippets, the code containers can overflowing their parent containers. One thing I try to do when prototyping and creating layouts is to make sure that every element is responsive, tested, and created correctly to minimize the amount of time needed to spend on it later. There is alot of jsx nested between a few different components and flexbox is primarily used for layout. I attempted to quickly perform a hot fix for this but it appears I'm going to have to go up the DOM tree or JSX if you will and throughly traverse down through the elements one at a time to determine what css issue.",
+              "I know I said I wan't going to comment much on the development of this website but I noticed whe dynamically creating code snippets, the code containers can overflowing their parent containers. One thing I try to do when prototyping and creating layouts is to make sure that every element is responsive, tested, and created correctly to minimize the amount of time needed to spend on it later. There is alot of jsx nested between a few different components and flexbox is primarily used for layout. I attempted to quickly perform a hot fix for this but it appears I'm going to have to go up the DOM tree or JSX if you will and throughly traverse down through the elements one at a time to determine what css issue. I'm going to have to do this later because I'm running out of time for this today. ",
             ],
             images: ["/day3/7.png", "/day3/8.png"],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    menu: "Portfolio Work",
-    description: "SocketChat",
-    content: [
-      {
-        subMenu: "Comments",
-        items: [
-          {
-            text: [""],
           },
         ],
       },

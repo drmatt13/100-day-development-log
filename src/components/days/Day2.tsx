@@ -2,83 +2,6 @@ import DayLayout from "../DayLayout";
 import Data from "../../types/data";
 
 const data: Data = [
-  // Leetitems
-  {
-    menu: "LeetCode",
-    content: [
-      {
-        subMenu: "347. Top K Frequent Elements" as "Objective",
-        items: [
-          {
-            language: "typescript",
-            text: [
-              "Given an integer array nums and an integer k, return the k most frequent elements. You may return the answer in any order.",
-              `This function, topKFrequent, finds the k most frequent elements in an array of numbers and returns them in descending order of frequency. Here's a breakdown of how I solved it:`,
-              "1. Create a Frequency Object: First, we create an empty object freq to keep track of how many times each number appears in the input array nums. The keys of this object are the numbers from the array (converted to strings), and the values are the counts of how often each number appears.",
-              "2. Count Frequencies: We iterate through each number in the nums array. For each number, we either initialize its count to 1 (if it hasn't been seen before) or increment its existing count (if it has been seen). This step builds the freq object with the correct counts for each number.",
-              "3. Sort by Frequency: We then get all the keys (the numbers from the original array) of the freq object and sort them. The sorting is done based on their frequency (the values in the freq object), in descending order. This means the number with the highest frequency will be the first in the sorted array, and so on.",
-              "4. Select Top k Frequent Elements: After sorting, we take the first k elements from this sorted array of keys. These are the k most frequent elements in the original array. Since these elements are currently in string form (because object keys are always strings), we convert them back into numbers using parseInt.",
-              "5. Return the Result: Finally, the function returns this array of the k most frequent elements, now correctly identified and in descending order of their frequencies.",
-            ],
-            code: `
-function topKFrequent(nums: number[], k: number): number[] {
-  // Create a frequency map
-  const freq: { [num: string]: number } = {};
-
-  // Count the frequency of each number
-  for (let num of nums) {
-    // If the number is not in the map, set it to 1
-    freq[num] = (freq[num] || 0) + 1;
-  }
-
-  // Sort the keys by frequency
-  const sortedKeys = Object.keys(freq).sort((a, b) => freq[b] - freq[a]);
-
-  // After sorting, return the first k keys
-  return sortedKeys.slice(0, k).map((num) => parseInt(num));
-}
-            `,
-          },
-        ],
-      },
-      {
-        subMenu: "238. Product of Array Except Self" as "Objective",
-        items: [
-          {
-            language: "typescript",
-            text: [
-              "Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i].",
-              "What this is essentially asking for is to take an array of numbers and return a new array where each element is the product of all the numbers in the original array except the number at that index.",
-              "Here's how to solve it:",
-              "You can optionally use 2 arrays to store the product of all the elements to the left and right of any given element. Then, you can multiply the elements at the same index in both arrays to get the product of all the elements except the current element.",
-              "Instead you can use a single array to store the product of all the elements to the left of any given element. Then, you can create a pointer variable to store the product of all the elements to the right of any given element. This pointer variable is updated as we iterate through the array from right to left, and we multiply it by the corresponding element in the left product array to get the final result.",
-            ],
-            code: `
-function productExceptSelf(nums: number[]): number[] {
-  // Create an array to store the product of all elements to the left of each element
-  const arr = new Array(nums.length).fill(1);
-  // Go through the array and calculate the product of all elements to the left of each element
-  // We skip the first element since there are no elements to the left of it
-  for (let i = 1; i < nums.length; i++) {
-    arr[i] = arr[i - 1] * nums[i - 1];
-  }
-  // Create a pointer variable to store the product of all elements to the right of each element
-  let p = 1;
-  // Go through the array in reverse and calculate the product of all elements to the right of each element, we use the pointer variable to store the product this time
-  // We skip the last element since there are no elements to the right of it
-  for (let i = nums.length - 1; i >= 0; i--) {
-    arr[i] *= p;
-    p *= nums[i];
-  }
-  // Return the array
-  return arr;
-}
-            `,
-          },
-        ],
-      },
-    ],
-  },
   // AWS Practice
   {
     menu: "AWS Practice",
@@ -303,9 +226,87 @@ int *ptr = arr; // ptr now holds the memory address of the first element of the 
       },
     ],
   },
+  // LeetCode
+  {
+    menu: "LeetCode",
+    content: [
+      {
+        subMenu: "347. Top K Frequent Elements" as "Objective",
+        items: [
+          {
+            language: "typescript",
+            text: [
+              "Given an integer array nums and an integer k, return the k most frequent elements. You may return the answer in any order.",
+              `This function, topKFrequent, finds the k most frequent elements in an array of numbers and returns them in descending order of frequency. Here's a breakdown of how I solved it:`,
+              "1. Create a Frequency Object: First, we create an empty object freq to keep track of how many times each number appears in the input array nums. The keys of this object are the numbers from the array (converted to strings), and the values are the counts of how often each number appears.",
+              "2. Count Frequencies: We iterate through each number in the nums array. For each number, we either initialize its count to 1 (if it hasn't been seen before) or increment its existing count (if it has been seen). This step builds the freq object with the correct counts for each number.",
+              "3. Sort by Frequency: We then get all the keys (the numbers from the original array) of the freq object and sort them. The sorting is done based on their frequency (the values in the freq object), in descending order. This means the number with the highest frequency will be the first in the sorted array, and so on.",
+              "4. Select Top k Frequent Elements: After sorting, we take the first k elements from this sorted array of keys. These are the k most frequent elements in the original array. Since these elements are currently in string form (because object keys are always strings), we convert them back into numbers using parseInt.",
+              "5. Return the Result: Finally, the function returns this array of the k most frequent elements, now correctly identified and in descending order of their frequencies.",
+            ],
+            code: `
+  function topKFrequent(nums: number[], k: number): number[] {
+    // Create a frequency map
+    const freq: { [num: string]: number } = {};
+  
+    // Count the frequency of each number
+    for (let num of nums) {
+      // If the number is not in the map, set it to 1
+      freq[num] = (freq[num] || 0) + 1;
+    }
+  
+    // Sort the keys by frequency
+    const sortedKeys = Object.keys(freq).sort((a, b) => freq[b] - freq[a]);
+  
+    // After sorting, return the first k keys
+    return sortedKeys.slice(0, k).map((num) => parseInt(num));
+  }
+              `,
+          },
+        ],
+      },
+      {
+        subMenu: "238. Product of Array Except Self" as "Objective",
+        items: [
+          {
+            language: "typescript",
+            text: [
+              "Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i].",
+              "What this is essentially asking for is to take an array of numbers and return a new array where each element is the product of all the numbers in the original array except the number at that index.",
+              "Here's how to solve it:",
+              "You can optionally use 2 arrays to store the product of all the elements to the left and right of any given element. Then, you can multiply the elements at the same index in both arrays to get the product of all the elements except the current element.",
+              "Instead you can use a single array to store the product of all the elements to the left of any given element. Then, you can create a pointer variable to store the product of all the elements to the right of any given element. This pointer variable is updated as we iterate through the array from right to left, and we multiply it by the corresponding element in the left product array to get the final result.",
+            ],
+            code: `
+  function productExceptSelf(nums: number[]): number[] {
+    // Create an array to store the product of all elements to the left of each element
+    const arr = new Array(nums.length).fill(1);
+    // Go through the array and calculate the product of all elements to the left of each element
+    // We skip the first element since there are no elements to the left of it
+    for (let i = 1; i < nums.length; i++) {
+      arr[i] = arr[i - 1] * nums[i - 1];
+    }
+    // Create a pointer variable to store the product of all elements to the right of each element
+    let p = 1;
+    // Go through the array in reverse and calculate the product of all elements to the right of each element, we use the pointer variable to store the product this time
+    // We skip the last element since there are no elements to the right of it
+    for (let i = nums.length - 1; i >= 0; i--) {
+      arr[i] *= p;
+      p *= nums[i];
+    }
+    // Return the array
+    return arr;
+  }
+              `,
+          },
+        ],
+      },
+    ],
+  },
   // Portfolio Work
   {
     menu: "Portfolio Work",
+    description: "SocketChat",
     content: [
       {
         subMenu: "Context",

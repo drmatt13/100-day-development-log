@@ -2,128 +2,6 @@ import DayLayout from "../DayLayout";
 import Data from "../../types/data";
 
 const data: Data = [
-  // Leetitems
-  {
-    menu: "LeetCode",
-    // text: "Problem NAME",
-    content: [
-      {
-        subMenu: "Comments",
-        items: [
-          {
-            text: [
-              "I'll be starting off with some easy leetitems problems for today to get back into the swing of things.",
-              "Also, I don't know if I'll be doing Leetitems every day but I'll try to do it on days I'm able.",
-            ],
-          },
-        ],
-      },
-      {
-        subMenu: "217. Contains Duplicate" as "Objective",
-        items: [
-          {
-            language: "typescript",
-            text: [
-              "Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct.",
-              "Very easy problem, just use a map to store the numbers and return true if the number already exists in the map, otherwise add it to the map and return false at the end.",
-            ],
-            code: `
-function containsDuplicate(nums: number[]): boolean {
-  const map = new Map<number, boolean>();
-  for (let num of nums) {
-    if (map.has(num)) return true;
-    map.set(num, true);
-  }
-  return false;
-}
-            `,
-          },
-        ],
-      },
-      {
-        subMenu: "242. Valid Anagram" as "Objective",
-        items: [
-          {
-            language: "typescript",
-            text: [
-              "Given two strings s and t, return true if t is an anagram of s, and false otherwise.",
-              "An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.",
-              "Another easy problem, just use a map to store the characters and their counts, then iterate through the second string and decrement the count of each character in the map. If the count is 0 or the character doesn't exist in the map, return false. If the string lengths are different, return false. Otherwise, return true.",
-            ],
-            code: `
-function isAnagram(s: string, t: string): boolean {
-  if (s.length !== t.length) return false;
-  const map = new Map<string, number>();
-  for (let c of s) {
-    map.get(c) ? map.set(c, map.get(c)! + 1) : map.set(c, 1);
-  }
-  for (let c of t) {
-    if (!map.get(c)) return false
-    map.set(c, map.get(c)! -1)
-  }
-  return true;
-}
-`,
-          },
-        ],
-      },
-      {
-        subMenu: "1. Two Sum" as "Objective",
-        items: [
-          {
-            language: "typescript",
-            text: [
-              "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You can return the answer in any order.",
-              "Ah, The famous two sum problem. Use a map to store the numbers and their indices, then iterate through the array and check if the map has the difference between the target and the current number. If it does, return the indices of the two numbers. If it doesn't, add the number to the map and continue.",
-            ],
-            code: `
-function twoSum(nums: number[], target: number): number[] | void {
-  const map = new Map<number, number>();
-  for (let i = 0; i < nums.length; i++) {
-    if (map.has(target - nums[i])) return [map.get(target - nums[i])!, i];
-    map.set(nums[i], i);
-  }
-  return;
-}
-`,
-          },
-        ],
-      },
-      {
-        subMenu: "49. Group Anagrams" as "Objective",
-        items: [
-          {
-            language: "typescript",
-            text: [
-              "Given an array of strings strs, group the anagrams together. You can return the answer in any order.",
-              "An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.",
-              "I solved the problem of grouping anagrams by first creating a map to track groups of anagrams and an array to hold the groups. For each string, I generated a key by counting the occurrences of each letter (using a fixed-size array for the alphabet) and then concatenated these counts into a string. If this key already existed in the map, I added the string to the existing group; otherwise, I created a new group and added it to both the map and the array of groups.",
-            ],
-            code: `
-function groupAnagrams(strs: string[]): string[][] {
-  const map = new Map<string, number>();
-  const groupedAnagrams: string[][] = [];
-  let index = 0;
-  for (let str of strs) {
-    let arr = Array.from({ length: 26 }, (i, k) => 0);
-    for (let char of str) {
-      arr[char.charitemsAt(0) - 97]++;
-    }
-    let key = arr.join("-");
-    if (map.has(key)) groupedAnagrams[map.get(key)!].push(str);
-    else {
-      map.set(key, index++);
-      groupedAnagrams.push([str]);
-    }
-  }
-  return groupedAnagrams;
-}
-`,
-          },
-        ],
-      },
-    ],
-  },
   // AWS Practice
   {
     menu: "AWS Practice",
@@ -383,6 +261,128 @@ int main() {
   return 0;
 }
             `,
+          },
+        ],
+      },
+    ],
+  },
+  // LeetCode
+  {
+    menu: "LeetCode",
+    // text: "Problem NAME",
+    content: [
+      {
+        subMenu: "Comments",
+        items: [
+          {
+            text: [
+              "I'll be starting off with some easy leetCode problems for today to get back into the swing of things.",
+              "Also, I don't know if I'll be doing LeetCode every day but I'll try to do it on days I'm able.",
+            ],
+          },
+        ],
+      },
+      {
+        subMenu: "217. Contains Duplicate" as "Objective",
+        items: [
+          {
+            language: "typescript",
+            text: [
+              "Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct.",
+              "Very easy problem, just use a map to store the numbers and return true if the number already exists in the map, otherwise add it to the map and return false at the end.",
+            ],
+            code: `
+  function containsDuplicate(nums: number[]): boolean {
+    const map = new Map<number, boolean>();
+    for (let num of nums) {
+      if (map.has(num)) return true;
+      map.set(num, true);
+    }
+    return false;
+  }
+              `,
+          },
+        ],
+      },
+      {
+        subMenu: "242. Valid Anagram" as "Objective",
+        items: [
+          {
+            language: "typescript",
+            text: [
+              "Given two strings s and t, return true if t is an anagram of s, and false otherwise.",
+              "An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.",
+              "Another easy problem, just use a map to store the characters and their counts, then iterate through the second string and decrement the count of each character in the map. If the count is 0 or the character doesn't exist in the map, return false. If the string lengths are different, return false. Otherwise, return true.",
+            ],
+            code: `
+  function isAnagram(s: string, t: string): boolean {
+    if (s.length !== t.length) return false;
+    const map = new Map<string, number>();
+    for (let c of s) {
+      map.get(c) ? map.set(c, map.get(c)! + 1) : map.set(c, 1);
+    }
+    for (let c of t) {
+      if (!map.get(c)) return false
+      map.set(c, map.get(c)! -1)
+    }
+    return true;
+  }
+  `,
+          },
+        ],
+      },
+      {
+        subMenu: "1. Two Sum" as "Objective",
+        items: [
+          {
+            language: "typescript",
+            text: [
+              "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You can return the answer in any order.",
+              "Ah, The famous two sum problem. Use a map to store the numbers and their indices, then iterate through the array and check if the map has the difference between the target and the current number. If it does, return the indices of the two numbers. If it doesn't, add the number to the map and continue.",
+            ],
+            code: `
+  function twoSum(nums: number[], target: number): number[] | void {
+    const map = new Map<number, number>();
+    for (let i = 0; i < nums.length; i++) {
+      if (map.has(target - nums[i])) return [map.get(target - nums[i])!, i];
+      map.set(nums[i], i);
+    }
+    return;
+  }
+  `,
+          },
+        ],
+      },
+      {
+        subMenu: "49. Group Anagrams" as "Objective",
+        items: [
+          {
+            language: "typescript",
+            text: [
+              "Given an array of strings strs, group the anagrams together. You can return the answer in any order.",
+              "An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.",
+              "I solved the problem of grouping anagrams by first creating a map to track groups of anagrams and an array to hold the groups. For each string, I generated a key by counting the occurrences of each letter (using a fixed-size array for the alphabet) and then concatenated these counts into a string. If this key already existed in the map, I added the string to the existing group; otherwise, I created a new group and added it to both the map and the array of groups.",
+            ],
+            code: `
+  function groupAnagrams(strs: string[]): string[][] {
+    const map = new Map<string, number>();
+    const groupedAnagrams: string[][] = [];
+    let index = 0;
+    for (let str of strs) {
+      let arr = Array.from({ length: 26 }, (i, k) => 0);
+      for (let char of str) {
+        arr[char.charitemsAt(0) - 97]++;
+      }
+      let key = arr.join("-");
+      if (map.has(key)) groupedAnagrams[map.get(key)!].push(str);
+      else {
+        map.set(key, index++);
+        groupedAnagrams.push([str]);
+      }
+    }
+    return groupedAnagrams;
+  }
+  `,
           },
         ],
       },

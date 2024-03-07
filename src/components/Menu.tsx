@@ -20,6 +20,14 @@ interface LazyComponentsMap {
 const lazyComponents: LazyComponentsMap = {
   1: () => import("./days/Day1"),
   2: () => import("./days/Day2"),
+  3: () => import("./days/Day3"),
+  // 4: () => import("./days/Day4"),
+  // 5: () => import("./days/Day5"),
+  // 6: () => import("./days/Day6"),
+  // 7: () => import("./days/Day7"),
+  // 8: () => import("./days/Day8"),
+  // 9: () => import("./days/Day9"),
+  // 10: () => import("./days/Day10"),
 };
 
 const Menu = ({ title, children, open, top, day, date }: Props) => {
@@ -29,7 +37,7 @@ const Menu = ({ title, children, open, top, day, date }: Props) => {
     <div
       className={`${
         top ? "mt-16 sm:mt-20 lg:mt-24" : "mt-8 sm:mt-12"
-      } flex flex-col`}
+      } flex flex-col /bg-white`}
     >
       <div className="flex items-center">
         <Button isOpen={isOpen} setIsOpen={setIsOpen} />

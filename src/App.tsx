@@ -126,9 +126,10 @@ function App() {
               end :)
             </p>
           </Menu>
-          <Menu day={1} date="3/4/24" />
-          <Menu day={2} date="3/5/24" />
-          <Menu day={3} date="3/6/24" />
+          <Menu day={1} date="3/5/24" />
+          <Menu day={2} date="3/6/24" />
+          <Menu day={3} date="3/7/24" />
+          <Menu day={4} date="3/8/24" />
         </div>
       </div>
     </>

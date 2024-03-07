@@ -409,7 +409,9 @@ int main() {
         items: [
           {
             text: [
-              `I'm working on adding functionality to mark private messages as 'seen' or 'read'. However, I've found that managing the 'seen' and 'read' state names in React can get confusing quickly. This is because the message's sender and receiver can be either "you" or "them," which complicates things.`,
+              `I'm working on adding functionality to mark private messages as 'seen' or 'read'. However, I've found that managing the 'seen' and 'read' state names in React can become confusing quickly from a logical standpoint. This is because the message's sender and receiver can be either "you" or "them".`,
+              "So first things first, I updated the state to reflect a new naming convention that is more clear and concise.",
+              "~ Previous private message state structure: ",
             ],
             language: "typescript",
             code: `
@@ -424,91 +426,59 @@ const [privateMessages, setPrivateMessages] = useState<{
             `,
           },
           {
-            text: [
-              "So first things first, I updated the state to reflect the new structure.",
-            ],
+            text: ["~ New private message state structure:"],
             language: "typescript",
             code: `
 const [privateMessages, setPrivateMessages] = useState<{
   [id: string]: {
     user: User;
     messages: Message[];
-    ISeenTheirMessage: boolean;
-    TheyReadMyMessage: boolean;
+    ISeenTheirMessage: number;
+    TheyReadMyMessage: number;
   };
 }>({});
             `,
           },
           {
             text: [
+              "^ Then I realized that 'ISeenTheirMessage' and 'TheyReadMyMessage' should use numbers instead of booleans to timestamp the last time the message was seen or read. This will allow me to compare the time the message was sent/received to the time the message was seen or read and display the time in a human-readable format. In my experience, It's always best to make use of TypeScript and create clear and concise properties and event names with corresponding types to avoid confusion and bugs later on, even if it means a little extra work and redundancy upfront.",
               "Thanks to TypeScript's powerful feature of highlighting errors directly in the GUI, I can easily do a quick refactor and update the privateMessages objects key names across my application before I start implementing the new functionality.",
             ],
-            images: ["/day3/9.png"],
+            images: ["/day3/9.png", "/day3/10.png"],
           },
           {
             text: [
-              "Errors like this are popping up all over the place but that's to be expected.",
+              "^ Errors like this are popping up everywhere, which is to be expected after you modify a type definition.",
             ],
-            images: ["/day3/10.png"],
+            images: [],
           },
           {
             text: [
               "Jumping back into a complex feature after a break highlights the nuanced landscape of my work. I'm currently navigating through an intricate setup involving multiple components and hooks, notably the 'privateMessages/setPrivateMessages' state, alongside a custom socket hook and a global context. This setup is designed to streamline socket functionalities to the messenger and chat components, all while ensuring seamless integration with a dedicated socket server. It's a process of reacquainting with the system, refining as necessary, and progressively adding new functionalities. This approach exemplifies the balance between understanding existing frameworks, implementing refinements, and advancing the project's capabilities in a professional and methodical manner.",
               "------",
-              "I went ahead and added a listener for a read event in the SocketIO server. All this does is check if that recipient is online from a serverside cache of active users and if they are, emit a read event to them.",
+              "I went ahead and added a listener for a read event in the SocketIO server. It uses some logic to determine if the message has no recipient, if the recipient is not in the active users list, or if the recipient is the sender. If any of these conditions are met, the server will return. Otherwise, it will emit a read event to the other user.",
             ],
             language: "typescript",
             code: `
-socket.on("read", (recipient: User) => {
-  if (!activeUsers[socket.id]) {
+socket.on("read", (recipientId: string) => {
+  // if the message has no recipient
+  // or the recipient is not in the active users list
+  // or if somehow (you) are trying to read a message from yourself
+  // then return
+  if (!recipientId || !activeUsers[recipientId] || recipientId === socket.id)
     return;
-  }
-  
-  if (recipient.id) {
-    io.to(recipient.id).emit("read", activeUsers[socket.id]);
-  }
+
+  // emit to the other user that (you) read their last message
+  io.to(recipientId).emit("read", socket.id);
 });
             `,
           },
           {
             text: [
-              "Next I need to figure out how to implement the 'read' functionality on the client side which will be a bit more complicated than the SocketIO server side",
-            ],
-            language: "typescript",
-            code: `
-interface PrivateMessages {
-  [id: string]: {
-    user: User;
-    messages: Message[];
-    ISeenTheirMessage: boolean;
-    TheyReadMyMessage: boolean;
-  };
-}
-            `,
-          },
-          {
-            text: [
-              "Now before I get carried away with starting to implement this feature, I decided to again quickly refactor the types to make the names more clear and concise.",
-            ],
-            language: "typescript",
-            code: `
-interface PrivateMessages {
-  [id: string]: {
-    user: User;
-    messages: Message[];
-    IReadTheirLastMessage: boolean;
-    TheyReadMyLastMessage: boolean;
-  };
-}
-            `,
-          },
-          {
-            text: [
-              `^ Now everything is in the form of "read", they read my last message, they emit a read event, then I’ll receive a read event, I read their last message, I send a read event, and they receive a read event, etc.`,
-              `In my experience, It's always best to make use of TypeScript and create clear and concise properties and event names with corresponding types to avoid confusion and bugs later on, even if it means a little extra work and redundancy upfront.`,
               "------",
-              "Next, I'm going to showcase some of the logic for handling sending and recieving a message.",
-              "Sending a message from the client:",
+              "Next I need to to implement the 'read' functionality on the client side which will be a bit more complicated than the SocketIO implementation on the server side.",
+              "So let me start by breaking down some of the pre-established code/logic for handling sending and receiving a message.",
+              "~ Sending a message from the client via 'socket.io-client':",
             ],
             language: "typescript",
             code: `
@@ -520,7 +490,7 @@ const submitMessage = useCallback(
           },
           {
             text: [
-              "Recieving a message on the server w/ some added logic for handiling reads:",
+              "~ Receiving a message on the SocketIO server and forwarding that message back to the respective clients:",
             ],
 
             language: "typescript",
@@ -552,10 +522,98 @@ socket.on("message", async (message: Message) => {
             `,
           },
           {
-            text: ["Recieving that message back on the client:"],
+            text: [
+              "~ Receiving the forwarded message back on the client and updating state:",
+            ],
             language: "typescript",
             code: `
-// Theres alot going in this one
+socketConnection.on("message", (message: Message) => {
+  if (!message.recipient) {
+    if (!chatIdRef.current) playSound("/discord-notification.mp3");
+    setGlobalMessages((prev) => {
+      return [...prev, message];
+    });
+  }
+
+  if (message.recipient) {
+    const privateMessageId =
+    message.sender.id === socketConnection.id
+    ? message.recipient.id!
+    : message.sender.id!;
+    // this means that the frontend user is currently in the same private chatroom as the message sender
+    if (chatIdRef.current === privateMessageId)
+      playSound("/discord-notification.mp3");
+    // Pro React tip: use the callback version of setState when you need to update state based on the previous state
+    setPrivateMessages((prev) => {
+      const newPrivateMessages = { ...prev };
+      if (!newPrivateMessages[privateMessageId])
+        newPrivateMessages[privateMessageId] = {
+          user: message.sender,
+          messages: [],
+        };
+      newPrivateMessages[privateMessageId].messages.push(message);
+      return newPrivateMessages;
+    });
+  }
+});
+            `,
+          },
+          {
+            text: [
+              "------",
+              "Now to update the client side and add the 'read' functionality.",
+              "~ Firstly I created a useEffect hook to send a 'read' event to the SocketIO server if the user receives a private message while in the same chatroom or switches to that chatroom and hasn't lead the latest message:",
+            ],
+            language: "typescript",
+            code: `
+useEffect(() => {
+  // if i didnt read their last message, then i want to emit that i read their last message
+  if (chatId && privateMessages[chatId].messages.length > 0) {
+    if (!privateMessages[chatId].IReadTheirLastMessage) {
+      setPrivateMessages((prev) => ({
+        ...prev,
+        [chatId]: {
+          ...prev[chatId],
+          IReadTheirLastMessage: Date.now(),
+        },
+      }));
+      // emit to the server that (you) read the message
+      socketConnection?.emit("read", chatId);
+    }
+  }
+}, [chatId, privateMessages, socketConnection]);
+`,
+          },
+          {
+            text: [
+              "~ Then I added a listener for the 'read' event on the client side:",
+            ],
+            language: "typescript",
+            code: `
+socketConnection.on("read", (senderId: string) => {
+  setPrivateMessages((prev) => {
+    const newPrivateMessages = { ...prev };
+    if (!newPrivateMessages[senderId!])
+      newPrivateMessages[senderId!] = {
+        user,
+        messages: [],
+        IReadTheirLastMessage: 0,
+        TheyReadMyLastMessage: 0,
+      };
+    newPrivateMessages[senderId!].IReadTheirLastMessage =
+      newPrivateMessages[senderId!]?.IReadTheirLastMessage || 0;
+    newPrivateMessages[senderId!].TheyReadMyLastMessage = Date.now();
+    return newPrivateMessages;
+  });
+});
+`,
+          },
+          {
+            text: [
+              "~ Then I updated the client side logic which handles receiving a message to logically update the 'TheyReadMyLastMessage' property of the privateMessages object:",
+            ],
+            language: "typescript",
+            code: `
 socketConnection.on("message", (message: Message) => {
   if (!message.recipient) {
     if (!chatIdRef.current) playSound("/discord-notification.mp3");
@@ -569,10 +627,10 @@ socketConnection.on("message", (message: Message) => {
       message.sender.id === socketConnection.id
         ? message.recipient.id!
         : message.sender.id!;
-    // this means that the frontend user is in the private chat which has the same id as the other user
+    // this means that the frontend user is currently in the same private chatroom as the message sender
     if (chatIdRef.current === privateMessageId)
       playSound("/discord-notification.mp3");
-    // Pro React tip: use the callback version of setState when you need to update state based on the previous state, you can use logic inside the callback which wouldn't be possible outside of setState
+    // Pro React tip: use the callback version of setState when you need to update state based on the previous state
     setPrivateMessages((prev) => {
       const newPrivateMessages = { ...prev };
       if (!newPrivateMessages[privateMessageId])
@@ -580,45 +638,208 @@ socketConnection.on("message", (message: Message) => {
           user: message.sender,
           messages: [],
           // if the user (you) are in the chat then they (you) must have read the last message
-          IReadTheirLastMessage: chatIdRef.current === privateMessageId,
+          // very situational because (you) will have to be in the private chat when receiving the first message from the other user
+          IReadTheirLastMessage:
+            chatIdRef.current === privateMessageId ? Date.now() : 0,
           // if (you) didnt send the last message then the sender would have had to have read my last message by default
-          TheyReadMyLastMessage: message.sender.id !== socketConnection.id,
+          TheyReadMyLastMessage:
+            message.sender.id !== socketConnection.id ? Date.now() : 0,
         };
       newPrivateMessages[privateMessageId].messages.push(message);
+      // if the user (you) are in the chat then they (you) must have read the last message
+      if (chatIdRef.current === privateMessageId) {
+        newPrivateMessages[privateMessageId].IReadTheirLastMessage =
+          Date.now();
+        // emit that (you) read their last message unless (you) sent the last message
+        if (message.sender.id !== socketConnection.id)
+          socketConnection.emit("read", message.sender.id);
+      } else {
+        newPrivateMessages[privateMessageId].IReadTheirLastMessage = 0;
+      }
       return newPrivateMessages;
     });
   }
 });
-            `,
+`,
           },
           {
             text: [
-              "Next I created some new logic to handle the 'read' event on the client side. Not toally sure if it'll work yet but I'm going to give it a shot.",
+              "~ Then I updated the Navbars message component to logically display the 'seen' and 'read' states:",
             ],
             language: "typescript",
             code: `
-socketConnection.on("read", (user: User) => {
-  // if they read your message them that user must already exist in your local privateMessages cache
-  setPrivateMessages((prev) => {
-    const newPrivateMessages = { ...prev };
-    if (!newPrivateMessages[user.id!])
-      newPrivateMessages[user.id!] = {
-        user,
-        messages: [],
-        // if they are simply telling me that they read my last message then retain the previous value of IReadTheirLastMessage
-        IReadTheirLastMessage:
-          newPrivateMessages[user.id!].IReadTheirLastMessage,
-        TheyReadMyLastMessage: true,
-      };
-    newPrivateMessages[user.id!].IReadTheirLastMessage = true;
-    return newPrivateMessages;
-  });
-});
-            `,
+const Messages = () => {
+  const {
+    modal,
+    setModal,
+    privateMessages,
+    darkMode,
+    mobile,
+    activeUsers,
+    setChatId,
+    user,
+  } = useContext(AppContext);
+
+  const [messages, setMessages] = useState<
+    Array<(typeof privateMessages)[string]>
+  >(
+    Object.entries(privateMessages)
+      .map(([id, data]) => data)
+      .filter(
+        (data) =>
+          data.messages.length > 1 ||
+          (data.messages.length === 1 && !data.messages[0].exiting)
+      )
+  );
+
+  useEffect(() => {
+    setMessages((prev) =>
+      Object.entries(privateMessages)
+        .map(([id, data]) => data)
+        .filter(
+          (data) =>
+            data.messages.length > 1 ||
+            (data.messages.length === 1 && !data.messages[0].exiting)
+        )
+    );
+  }, [privateMessages]);
+
+  return (
+    <ModalMenu
+      active={modal === "messages"}
+      closeMenu={() => setModal(undefined)}
+      side="right"
+    >
+      {/* <div className="w-72 sm:w-[22rem] h-96"> */}
+      {messages.length === 0 ? (
+        <div className="text-xs sm:text-sm text-center pb-1 sm:pb-2 pt-2 sm:pt-3 my-2 opacity-80 dark:opacity-70 w-72 sm:w-[22rem]">
+          Your inbox is empty 😔
+        </div>
+      ) : (
+        <>
+          <div className="text-xs sm:text-sm text-center underline pb-1 sm:pb-2 pt-2 sm:pt-3 my-2 opacity-80 dark:opacity-70 w-72 sm:w-[22rem]">
+            Messages
+          </div>
+
+          <div
+            className="overflow-y-auto overflow-x-hidden pl-4 pr-5 sm:pl-3 sm:pr-4 mb-2.5 sm:mb-3.5 mr-2.5 h-max flex flex-col w-72 sm:w-[22rem]"
+          >
+            {messages.map((message, i) => (
+              <div
+                key={message.user.id}
+                className="relative items-start mb-2.5 sm:mb-3 last-of-type:mb-0 group cursor-pointer flex group w-max max-w-full"
+                onClick={() => {
+                  setChatId(message.user.id);
+                  setModal(undefined);
+                }}
+              >
+                <div className="relative shrink-0">
+                  <img
+                    className="h-8 w-8 rounded-full shadow-xl border border-black/20 dark:border-white/05"
+                    src={\`data:image/jpg;base64, \${
+                      avatarList[message.user.avatar ? message.user.avatar : 0]
+                    }\`}
+                    alt="activeUser avatar"
+                  />
+                  <div
+                    className={\`\${
+                      activeUsers[message.user.id!]
+                        ? "bg-green-500 dark:border-green-600 dark:border-2 border-green-600"
+                        : "bg-red-500 border-red-900 dark:border-red-800"
+                    } absolute top-[1.5rem] right-0 w-[.5rem] h-[.5rem] rounded-full border\`}
+                  />
+                </div>
+
+                <div className="ml-2 flex flex-col items-start justify-center min-w-28 overflow-hidden w-max">
+                  <div
+                    className={\`\${
+                      mobile
+                        ? "group-active:opacity-100"
+                        : "group-hover:opacity-100"
+                    } relative opacity-75 dark:opacity-75 flex-1 w-full flex flex-col px-3 py-2 bg-white dark:bg-zinc-700 rounded-lg\`}
+                  >
+                    <div
+                      className={\`w-full h-full absolute top-0 left-0 rounded-lg /shadow border border-gray-800/20 /border-red-700 /dark:border-red-500 /bg-red-600/15 pointer-events-none\`}
+                    />
+                    <div
+                      className={\`w-max text-xs underline text-black/85 dark:text-white opacity-90 dark:opacity-75 cursor-pointer pr-4\`}
+                    >
+                      {message.user.name}
+                    </div>
+                    <div className="w-full">
+                      <p className="mt-[.4rem] sm:mt-[.2rem] text-xs sm:text-sm truncate">
+                        {message.messages[message.messages.length - 1].exiting
+                          ? message.messages[message.messages.length - 2].sender
+                              .id === user?.id
+                            ? \`You: \${
+                                message.messages[message.messages.length - 2]
+                                  .text || "sent a photo"
+                              }\`
+                            : \`\${
+                                message.messages[message.messages.length - 2]
+                                  .text || "Sent a photo"
+                              }\`
+                          : message.messages[message.messages.length - 1].sender
+                              .id === user?.id
+                          ? \`You: \${
+                              message.messages[message.messages.length - 1]
+                                .text || "sent a photo"
+                            }\`
+                          : \`\${
+                              message.messages[message.messages.length - 1]
+                                .text || "Sent a photo"
+                            }\`}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  className={\`\${
+                    mobile
+                      ? "group-active:opacity-100"
+                      : "group-hover:opacity-100"
+                  } opacity-60 dark:opacity-75 pl-2.5 h-full flex flex-col justify-center shrink-0\`}
+                >
+                  <div className="h-max dark:text-white/75 text-xs shadow-xl">
+                    {formatTimestampToTime(
+                      message.messages[message.messages.length - 1].exiting
+                        ? message.messages[message.messages.length - 2]
+                            .timestamp
+                        : message.messages[message.messages.length - 1]
+                            .timestamp
+                    )}
+                  </div>
+                  <div className="h-max dark:text-white/75 text-xs shadow-xl mt-1.5">
+                    {message.messages[message.messages.length - 1].sender.id ===
+                    user?.id
+                      ? // if the last message was sent by the me, compare the time they read my last message and the timestamp from the last message
+                        privateMessages[message.user.id!]
+                          .TheyReadMyLastMessage >
+                        message.messages[message.messages.length - 1].timestamp
+                        ? "Seen"
+                        : "Unseen"
+                      : // if the last message was sent by the other user
+                      privateMessages[message.user.id!].IReadTheirLastMessage >
+                        0
+                      ? "Read"
+                      : "Unread"}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+      {/* </div> */}
+    </ModalMenu>
+  );
+};
+`,
           },
           {
             text: [
-              "And upon the first test (of probably many more), it's giving me a true value for TheyReadMyLastMessage when the receiver was not active in the private chat.",
+              "Finally, here is a visual representation of the 'seen' and 'read' states:",
             ],
             images: ["/day3/11.png"],
           },
@@ -629,7 +850,7 @@ socketConnection.on("read", (user: User) => {
         items: [
           {
             text: [
-              `Seeing as I'm nearing the end of developing this application and every other feature is battle-tested and working as expected. I'm confident that I can get this feature working as well ("It'll be pretty annoying if I need to continue switching between windows every time I make a slight edit or test which will inturpt my productivity"). I'm going to continue to work on this feature without documenting the rest of the process. But with that said I am excited to hopefully wrap his up soon and move on to the next project. I'll be sure to create a video showcasing the final product along with a detailed write up of the entire project.`,
+              "Now that the major functionality has been implemented, I'm left with just a few minor UI enhancements to make. I've only shared a glimpse into the development process here because I began documenting this project well into its development phase. The upcoming adjustments, though essential, are finer details that round off the project rather than define it.",
             ],
           },
         ],
@@ -645,7 +866,7 @@ socketConnection.on("read", (user: User) => {
         items: [
           {
             text: [
-              "I know I said I wan't going to comment much on the development of this website but I noticed whe dynamically creating code snippets, the code containers can overflowing their parent containers. One thing I try to do when prototyping and creating layouts is to make sure that every element is responsive, tested, and created correctly to minimize the amount of time needed to spend on it later. There is alot of jsx nested between a few different components and flexbox is primarily used for layout. I attempted to quickly perform a hot fix for this but it appears I'm going to have to go up the DOM tree or JSX if you will and throughly traverse down through the elements one at a time to determine what css issue. I'm going to have to do this later because I'm running out of time for this today. ",
+              "I know I said I wasn't going to comment much on the development of this website but I noticed when dynamically creating code snippets, the code containers can overflow their parent containers. One thing I try to do when prototyping and creating layouts is to make sure that every element is responsive, tested, and created correctly to minimize the amount of time needed to spend on it later. There is a lot of JSX nested between a few different components and flexbox is primarily used for layout. I attempted to quickly perform a hot fix for this but it appears I'm going to have to go up the DOM tree (or VDOM if you will) and thoroughly traverse down through the elements one at a time to determine what CSS issue. I'm going to have to do this some other day when I feel like it because sometimes CSS can be annoying and I just don't feel like addressing it right now. By the time (you) who are reading this, this will be fixed.",
             ],
             images: ["/day3/7.png", "/day3/8.png"],
           },

@@ -18,6 +18,7 @@ type Data = Array<{
       | "Notes"
       | "Knowledge Learned"
       | "Concepts Explored"
+      | "Concepts Review"
       | "Code"
       | "Images"
       | "Resources"
@@ -26,6 +27,7 @@ type Data = Array<{
       | "Practice"
       | "Conclusion"
       | "Summary"
+      | "The Idea"
       | "Context";
     items: {
       text?: string[];

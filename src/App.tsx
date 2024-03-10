@@ -130,6 +130,7 @@ function App() {
           <Menu day={2} date="3/6/24" />
           <Menu day={3} date="3/7/24" />
           <Menu day={4} date="3/8/24" />
+          <Menu day={5} date="3/9/24" />
         </div>
       </div>
     </>

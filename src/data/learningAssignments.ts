@@ -3,7 +3,7 @@ const learningAssignments = [
   "C Pointers and Arrays",
   "C Memory Management: malloc and free",
   "C Data Structures: Linked lists, Trees",
-  "C Algorithms: Sorting algorithms, Searching algorithms",
+  "C Understanding Concurrency",
   "C Modular Programming: Header files, Compilation units, build process",
   "C Advanced Compilation: Preprocessor directives, Compiler flags, linking",
   "C++ Introduction: Syntax, basic OOP concepts",

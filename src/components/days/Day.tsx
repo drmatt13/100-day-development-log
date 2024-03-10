@@ -2,22 +2,6 @@ import DayLayout from "../DayLayout";
 import Data from "../../types/data";
 
 const data: Data = [
-  // LeetCode
-  {
-    menu: "LeetCode",
-    description: "Problem NAME",
-    content: [
-      {
-        subMenu: "Code",
-        items: [
-          {
-            language: "typescript",
-            code: `function twoSum(nums: number[], target: number): number[] {}`,
-          },
-        ],
-      },
-    ],
-  },
   // AWS Practice
   {
     menu: "AWS Practice",
@@ -50,6 +34,22 @@ const data: Data = [
             code: `
             
             `,
+          },
+        ],
+      },
+    ],
+  },
+  // LeetCode
+  {
+    menu: "LeetCode",
+    description: "Problem NAME",
+    content: [
+      {
+        subMenu: "Code",
+        items: [
+          {
+            language: "typescript",
+            code: `function twoSum(nums: number[], target: number): number[] {}`,
           },
         ],
       },

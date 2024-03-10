@@ -22,7 +22,7 @@ const lazyComponents: LazyComponentsMap = {
   2: () => import("./days/Day2"),
   3: () => import("./days/Day3"),
   4: () => import("./days/Day4"),
-  // 5: () => import("./days/Day5"),
+  5: () => import("./days/Day5"),
   // 6: () => import("./days/Day6"),
   // 7: () => import("./days/Day7"),
   // 8: () => import("./days/Day8"),
@@ -34,11 +34,18 @@ const Menu = ({ title, children, open, top, day, date }: Props) => {
   const [isOpen, setIsOpen] = useState(open);
 
   return (
-    <div
-      className={`${
-        top ? "mt-16 sm:mt-20 lg:mt-24" : "mt-8 sm:mt-12"
-      } flex flex-col /bg-white`}
-    >
+    <div className={`flex flex-col`}>
+      {top ? (
+        <div className="mt-16 sm:mt-20 lg:mt-24" />
+      ) : (
+        <div className="h-8 sm:h-12 flex">
+          <div className="w-12 flex-1 flex /hidden">
+            {/* {!open && (
+              <div className="ml-3 w-3 h-full border-gray-400 border-l"></div>
+            )} */}
+          </div>
+        </div>
+      )}
       <div className="flex items-center">
         <Button isOpen={isOpen} setIsOpen={setIsOpen} />
         <p className="text-xl truncate">
@@ -54,7 +61,7 @@ const Menu = ({ title, children, open, top, day, date }: Props) => {
           return (
             <Fragment key={i}>
               {day === i && (
-                <Suspense fallback={<div>Loading...</div>}>
+                <Suspense fallback={<></>}>
                   <LazyComponent />
                 </Suspense>
               )}

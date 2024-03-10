@@ -850,7 +850,7 @@ const Messages = () => {
         items: [
           {
             text: [
-              "Now that the major functionality has been implemented, I'm left with just a few minor UI enhancements to make. I've only shared a glimpse into the development process here because I began documenting this project well into its development phase. The upcoming adjustments, though essential, are finer details that round off the project rather than define it.",
+              "Now that all of the major functionality has been implemented, I'm left with just a few minor UI enhancements to make. I've only shared a glimpse into the development process here because I began documenting this project well into its development phase. The upcoming adjustments, though essential, are finer details that round off the project rather than define it.",
             ],
           },
         ],

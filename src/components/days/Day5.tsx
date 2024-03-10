@@ -108,6 +108,7 @@ pthread_t threads[2]; // Declare an array of threads
             text: [
               `"pthread_t" is a data type used to uniquely identify a thread. It is an integer type, but it is not an integer. It is a unique identifier for a thread. It is used to create, control, and clean up threads.`,
               "To initialize and start the threads, you use the pthread_create function. This is where the threads are actually created and begin execution.",
+              "Note: When using pthread_create, the variables for the function arguments must be passed as pointers. This is because the pthread_create function is a variadic function, meaning it can take a variable number of arguments. The function arguments are passed as pointers to void, so you need to cast them to the appropriate type within the function.",
             ],
             language: "c",
             code: `
@@ -120,7 +121,7 @@ pthread_create(&thread1, NULL, function1, NULL);
               "What this is doing is creating a new thread and assigning it to the thread1 variable. The new thread will execute the function1 function, and the function1 function will be passed NULL as its argument.",
               "Note: attr: This is a pointer to a pthread_attr_t structure that specifies thread attributes like stack size, scheduling policy, etc. If you pass NULL, the thread is created with default attributes. In many cases, the default settings are sufficient, and that's why it's common to see NULL passed for this argument.",
               "When the thread is created, it is in a state of execution. It will continue to execute until the function it is running returns or the thread is explicitly terminated.",
-              "After this, you need to use the pthread_join function to wait for the thread to finish executing before the program continues. This is simular to Promise.all in JavaScript.",
+              "After this, you need to use the pthread_join function to clean up the threads and return the resources they were using to the system. This function also serves to wait for the threads in question to finish executing before the program continues. This is simular to Promise.all in JavaScript.",
             ],
             language: "c",
             code: `
@@ -139,6 +140,7 @@ for (int i = 0; i < NUM_THREADS; i++) {
 #include <stdlib.h>
 
 // The function that each thread will execute
+// Notice that we must use a pointer for the argument
 void* printNumber(void* arg) {
   int number = *((int*) arg); // Cast and dereference the argument to get the number
   printf("Number: %d\\n", number);
@@ -172,13 +174,119 @@ int main() {
               "",
               "Mutexes:",
               "As established above in the Context section, Mutexes are used to prevent multiple threads from accessing the same resource at the same time.",
-              "At the most basic level, a mutex is a lock that we use to synchronize access to a resource. Only one thread can lock (or own) a mutex at a time, ensuring exclusive access to a resource.",
-              "For clearity because this is a difficult concept to grasp, I'm going to break down some concepts surrounding mutexes and then provide an example.",
-              "First you can create a mutex with the pthread_mutex_t data type:",
+              "At the most basic level, a mutex acts as a lock to synchronize access to a resource. Only one thread can lock (or own) a mutex at a time, ensuring exclusive access to that resource.",
+              "Understanding mutexes took me a while, partly because of the complex language often used to describe them and the intricate examples provided. However, the concept essentially boils down to this:",
+              `You declare a new variable of the "pthread_mutex_t" type to act as a mutex and then you use the function "pthread_mutex_init" to initialize it. Then, within any function that accesses shared resources, typically variables that are global or accessible across multiple threads, you employ the mutex to establish a lock. This locking mechanism prevents other threads from accessing the same resource simultaneously. In practice, this means that when a thread enters a function and locks the mutex, it gains exclusive access to the shared resource. If another thread attempts to enter the function and lock the mutex while it's already locked, it will have to wait. This waiting thread will be paused, effectively lining up in a queue, until the first thread finishes its work and unlocks the mutex. Only then can the waiting thread acquire the lock and proceed with its own access to the shared resource.`,
+              "Finally, when the threads are finished and joined we must destroy the mutex to free up the resources it was using.",
+              "",
+              "",
+              "Example through code:",
+              "First create a mutex with the pthread_mutex_t data type along with a shared resource:",
             ],
             language: "c",
             code: `
 pthread_mutex_t lock;
+int sharedResource = 0;
+            `,
+          },
+          {
+            text: [
+              "Then create a function which will use the mutex to lock and unlock the shared resource:",
+            ],
+            language: "c",
+            code: `
+// Although the function doesn't take any arguments, it still needs to return a void* type
+void* increment(void* arg) {
+  pthread_mutex_lock(&lock); // Lock the mutex
+  sharedResource++;
+  pthread_mutex_unlock(&lock); // Unlock the mutex
+  return NULL;
+}`,
+          },
+          {
+            text: [
+              "Finally, within the main function, initialize the mutex, create the threads, and wait for them to finish before destroying the mutex:",
+            ],
+            language: "c",
+            code: `
+// Initialize the mutex
+// The second argument is a pointer to a pthread_mutexattr_t structure that specifies mutex attributes. If you pass NULL, the mutex is created with default attributes.
+pthread_mutex_init(&lock, NULL);
+
+pthread_t threads[2]; // Declare an array of threads
+
+// Create 2 threads with No special attributes, so pass NULL for the second argument
+for (int i = 0; i < 2; i++) {
+  pthread_create(&threads[i], NULL, increment, NULL);
+}
+
+// Wait for each of the threads to finish before continuing with the main thread.
+for (int i = 0; i < 2; i++) {
+  // Will wait for each thread to finish before continuing the iteration
+  pthread_join(threads[i], NULL);
+}
+
+// Clean up the mutex and free up the resources it was using
+pthread_mutex_destroy(&lock);
+
+// The threads have finished executing, so we can continue with the main thread and end the program.
+return 0;
+            `,
+          },
+          {
+            text: ["", "", "Here is everything all put together:"],
+            language: "c",
+            code: `
+#include <pthread.h>
+#include <stdio.h>
+
+// This variable will be shared by the threads
+int sharedResource = 0;
+// This mutex will protect the shared resource
+pthread_mutex_t lock;
+
+// This is a function which will be executed by the threads
+// Callback functions for pthread_create must take a pointer argument and return a pointer (void*)
+void* incrementResource(void* arg) {
+  // Lock the mutex before accessing the shared resource
+  // Other threads will have to wait until the mutex is unlocked before they can continue here.
+  pthread_mutex_lock(&lock);
+  sharedResource++;
+  // Here we can cast the argument to a long type
+  printf("Shared resource incremented to %d by thread %ld\\n", sharedResource, (long)arg);
+  // Unlock the mutex after accessing the shared resource so that other threads can access it
+  pthread_mutex_unlock(&lock);
+  // Return a null pointer
+  return NULL;
+}
+
+// The main function
+int main() {
+  // Initialize the mutex
+  pthread_mutex_init(&lock, NULL);
+
+  // Declare two threads
+  pthread_t threads[2];
+
+  // Create threads
+  for (long i = 0; i < 2; i++) {
+    // The function argument must be cast to a void* type
+    pthread_create(&threads[i], NULL, incrementResource, (void*)i);
+  }
+
+  // Wait for the threads to finish
+  for (int i = 0; i < 2; i++) {
+    pthread_join(threads[i], NULL);
+  }
+
+  // Clean up the mutex and free up the resources it was using
+  pthread_mutex_destroy(&lock);
+
+  // Final value of shared resource
+  printf("Final value of shared resource is %d\\n", sharedResource);
+
+  return 0;
+}            
             `,
           },
         ],

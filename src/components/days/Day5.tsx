@@ -3,15 +3,15 @@ import Data from "../../types/data";
 
 const data: Data = [
   // AWS Practice
-  {
-    menu: "AWS Practice",
-    content: [
-      {
-        subMenu: "Comments",
-        items: [{ text: ["text1", "text2"] }],
-      },
-    ],
-  },
+  // {
+  //   menu: "AWS Practice",
+  //   content: [
+  //     {
+  //       subMenu: "Comments",
+  //       items: [{ text: ["text1", "text2"] }],
+  //     },
+  //   ],
+  // },
   // Learning Assignment
   {
     menu: "Learning Assignment",
@@ -296,14 +296,123 @@ int main() {
   // LeetCode
   {
     menu: "LeetCode",
-    description: "Problem NAME",
+    description: "Linked list practice with C",
     content: [
       {
-        subMenu: "Code",
+        subMenu: "206. Reverse Linked List" as "Objective",
         items: [
           {
+            text: [
+              "Given the head of a singly linked list, reverse the list, and return the reversed list.",
+            ],
+            images: ["/day5/2.png"],
+          },
+          {
+            text: [
+              "",
+              "",
+              "Note: In my examples, I've chosen to use ((void*)0) directly instead of NULL for null pointers. This decision stems from understanding that NULL is a macro, typically defined as a null pointer constant, which can be either 0 or (void*)0 depending on the implementation. My preference for ((void*)0) is a deliberate practice to deepen my familiarity with C's handling of pointers and null values. This approach is a bit more explicit and serves as a reminder of the typeless pointer concept in C.",
+              "C Solution:",
+            ],
+            language: "c",
+            code: `
+struct ListNode *reverseList(struct ListNode *head) {
+  struct ListNode *prev = ((void *)0);
+  struct ListNode *current = head;
+  struct ListNode *next = ((void *)0);
+
+  while (current != ((void *)0)) {
+    next = current->next;
+    current->next = prev;
+    prev = current;
+    current = next;
+  }
+  return prev;
+}
+            `,
+          },
+        ],
+      },
+      {
+        subMenu: "21. Merge Two Sorted Lists" as "Objective",
+        items: [
+          {
+            text: [
+              "You are given the heads of two sorted linked lists list1 and list2.",
+              "Merge the two lists into one sorted list. The list should be made by splicing together the nodes of the first two lists.",
+              "Return the head of the merged linked list.",
+            ],
+            images: ["/day5/3.png"],
+          },
+          {
+            text: ["", "", "C Solution:"],
+            language: "c",
+            code: `
+struct ListNode *mergeTwoLists(struct ListNode *list1, struct ListNode *list2) {
+  // base case
+  if (list1 == NULL) {
+    return list2;
+  }
+  if (list2 == NULL) {
+    return list1;
+  }
+  // Create a new list to store the merged list
+  struct ListNode *head = (struct ListNode *)malloc(sizeof(struct ListNode));
+  // Create a pointer to the head of the new list
+  struct ListNode *p = head;
+  // While the pointers to the two lists are not null
+  while (list1 && list2) {
+    // If the value of the first list is less than the value of the second list
+    if (list1->val < list2->val) {
+      // Set the next pointer of the new list to the value of the first list
+      p->next = list1;
+      // Move the pointer of the first list to the next value
+      list1 = list1->next;
+    }
+    else {
+      // Set the next pointer of the new list to the value of the second list
+      p->next = list2;
+      // Move the pointer of the second list to the next value
+      list2 = list2->next;
+    }
+    // Move the pointer of the new list to the next value
+    p = p->next;
+  }
+  // If the first list is not null, set the next pointer of the new list to the first list
+  p->next = list1 ? list1 : list2;
+  // Return the next pointer of the new list
+  return head->next;
+}
+            `,
+          },
+          {
+            text: [
+              "",
+              "",
+              "Furthermore, I decided to also solve it in TypeScript:",
+            ],
             language: "typescript",
-            code: `function twoSum(nums: number[], target: number): number[] {}`,
+            code: `
+function mergeTwoLists(
+  list1: ListNode | null,
+  list2: ListNode | null
+): ListNode | null {
+  if (list1 === null) return list2;
+  if (list2 === null) return list1;
+  const mergedList: ListNode = { val: 0, next: null };
+  let current = mergedList;
+  while (list1 && list2) {
+    if (list1.val < list2.val) {
+      current.next = list1;
+      list1 = list1.next;
+    } else {
+      current.next = list2;
+      list2 = list2.next;
+    }
+    current = current.next;
+  }
+  return mergedList.next;
+}`,
           },
         ],
       },
@@ -312,10 +421,30 @@ int main() {
   // Portfolio Work
   {
     menu: "Portfolio Work",
+    description: "SocketChat ~ Finished Demonstration",
     content: [
       {
-        subMenu: "Comments",
-        items: [{ text: ["text1", "text2"] }],
+        subMenu: "Summary",
+        items: [
+          {
+            text: [
+              "This project turned out to be incredibly cool. What it does is create a chatroom with a Next.js frontend and a Socket.io server backend. When you land on the page, you're prompted to enter a username and then select an avatar. Once you're in, you can chat with others in real time. You can click on a user to enter into a private chat with them. When you private message someone, they will get a notification. The app also allows for quickly switching between private chats and the main chatroom, watching your private messages update in real time, seeing who is online, searching for messages, sending images, and URL previews. Adding to the versatility, users can quickly delete their session and change their username and avatar, reentering the chat as someone new. This added flexibility makes the chat experience even more dynamic and engaging.",
+              "To top it off, deploying this app on AWS is streamlined through an EC2 user data script. This script handles everything from system updates and Docker installation to cloning the project and setting up environmental variables automatically. It essentially allows for an almost auto-deployment of the app, making it accessible to a wider audience without the hassle of manual setup. Building this chat app was a lot of fun and a fantastic learning experience, especially in the realms of websockets and real-time communication.",
+              "",
+
+              "Github Repository: https://github.com/drmatt13/SocketChat",
+            ],
+          },
+        ],
+      },
+      {
+        subMenu: "Video",
+        items: [
+          {
+            text: [""],
+            video: "/day5/1.mkv",
+          },
+        ],
       },
     ],
   },

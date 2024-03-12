@@ -28,7 +28,8 @@ type Data = Array<{
       | "Conclusion"
       | "Summary"
       | "The Idea"
-      | "Context";
+      | "Context"
+      | "Video";
     items: {
       text?: string[];
       language?:
@@ -52,6 +53,7 @@ type Data = Array<{
         | "dockerfile";
       code?: string;
       images?: string[];
+      video?: string;
     }[];
   }>;
 }>;

@@ -177,6 +177,19 @@ const DayLayout = ({ data }: { data: Data }) => {
                               ))}
                             </div>
                           )}
+                          {item.video && (
+                            <div
+                              className={`${
+                                item.text && "pt-4"
+                              } -mt-2.5 flex flex-wrap flex-col sm:flex-row`}
+                            >
+                              <iframe
+                                src={item.video}
+                                title="video"
+                                className="w-full h-96 sm:w-96 sm:h-64 rounded-lg"
+                              />
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>

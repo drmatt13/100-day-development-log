@@ -111,7 +111,10 @@ function App() {
               the realm of cloud computing and software development.
             </p>
           </Menu>
-          <Menu open={false} title="100 Learning Assignments">
+          <Menu
+            open={false}
+            title="100 Learning Assignments: subject to change"
+          >
             <div className="mt-4 ml-12">
               {learningAssignments.map((item, index) => (
                 <p key={index}>
@@ -126,11 +129,13 @@ function App() {
               end :)
             </p>
           </Menu>
-          <Menu day={1} date="3/5/24" />
-          <Menu day={2} date="3/6/24" />
-          <Menu day={3} date="3/7/24" />
-          <Menu day={4} date="3/8/24" />
-          <Menu day={5} date="3/9/24" />
+          <Menu day={1} date="3/4/24" />
+          <Menu day={2} date="3/5/24" />
+          <Menu day={3} date="3/6/24" />
+          <Menu day={4} date="3/7/24" />
+          <Menu day={5} date="3/8/24" />
+          <Menu day={6} date="3/11/24" />
+          <Menu day={7} date="3/12/24" />
         </div>
       </div>
     </>

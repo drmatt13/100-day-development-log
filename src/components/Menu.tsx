@@ -25,9 +25,9 @@ const lazyComponents: LazyComponentsMap = {
   5: () => import("./days/Day5"),
   6: () => import("./days/Day6"),
   7: () => import("./days/Day7"),
-  // 8: () => import("./days/Day8"),
-  // 9: () => import("./days/Day9"),
-  // 10: () => import("./days/Day10"),
+  8: () => import("./days/Day8"),
+  9: () => import("./days/Day9"),
+  10: () => import("./days/Day10"),
 };
 
 const Menu = ({ title, children, open, top, day, date }: Props) => {

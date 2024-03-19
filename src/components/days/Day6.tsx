@@ -2,6 +2,48 @@ import DayLayout from "../DayLayout";
 import Data from "../../types/data";
 
 const data: Data = [
+  // AWS Practice
+  {
+    menu: "AWS Practice",
+    // description: "",
+    content: [
+      {
+        subMenu: "Concepts Review",
+        items: [
+          {
+            text: [
+              "Today I ran through several AWS Solutions Architect Professional practice exam questions while behind the scenes, using ChatGPT to expand upon the concepts and break them down thoroughly. (Not all questions reviewed today are shown)",
+              "",
+            ],
+            images: ["/day6/1.png"],
+          },
+          {
+            text: [
+              "^ In the initial question I reviewed today, I encountered a challenge related to SSL certificates for CloudFront, building upon my previous AWS session. The scenario required identifying the optimal method to secure a connection using HTTPS from the client to the ALB through CloudFront. The correct approach involves generating SSL certificates using AWS Certificate Manager for both the ALB and CloudFront. This is necessary because ALBs lack a default SSL/TLS certificate for their AWS-assigned domain names (e.g., my-alb-123456789.region.elb.amazonaws.com), and CloudFront's default SSL certificate only applies to its default domain. Therefore, custom SSL certificates must be generated and applied in both instances. However, attaching an SSL certificate to the ALB might not always be required, as this action secures traffic within AWS infrastructure, from one AWS service to another. Typically, this requirement stems from compliance needs.",
+              "",
+            ],
+            images: ["/day6/2.png"],
+          },
+          {
+            images: ["/day6/3.png"],
+          },
+          {
+            text: [
+              "^ Another inquiry focused on ensuring tag compliance across an AWS organization, mandating that tags are applied at the creation of any resource within all accounts. The discussion suggested AWS Config and SSM as potential solutions. However, both AWS Config and SSM are designed to assess compliance and automate remediation for resources failing compliance checks post-creation, rather than preventing the creation of untagged resources from the outset. The accurate solutions involved utilizing CloudFormation Resource Tags and setting up AWS Service Catalog to automatically apply tags to resources with unique identifiers for portfolio, product, and users. Yet, the AWS Service Catalog may not be ideally suited for cloud architects and engineers due to its restrictive nature of resource creation flexibility. Although using CloudFormation Resource Tags implies assigning tags within your templates, it doesn't inherently enforce their inclusion. Reflecting on this, the question appears somewhat misleading due to the lack of mention of Service Control Policies (SCPs) for AWS Organizations, which could enforce tag compliance across the organization and prevent the creation of resources without the requisite tags.",
+              "",
+            ],
+            images: ["/day6/4.png"],
+          },
+          {
+            text: [
+              "^ This question was a dead giveaway just based on the MySQL aspect, none of the incorrect answers for handling the MySQL portion made sense. But it did bring up a service called AppStream 2.0 which I never heard of and as part of my studying required me to research it a little bit. AppStream 2.0 is a service that allows you to stream any desktop application from AWS to any device. The service involves installing your applications on a virtual machine in AWS, creating an image of this setup, and then using this image to launch streaming instances that deliver the application UI to users via a web browser.",
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  // Arbitrary Study
   {
     menu: "Arbitrary Study",
     description: "Additional Learning with C",
@@ -264,17 +306,6 @@ int main() {
             ],
           },
         ],
-      },
-    ],
-  },
-  // Portfolio Work
-  {
-    menu: "Portfolio Work",
-    description: "Unnamed AWS SAM Project ~ API Rate Limiter",
-    content: [
-      {
-        subMenu: "Comments",
-        items: [{ text: ["text1", "text2"] }],
       },
     ],
   },

@@ -26,7 +26,7 @@ function App() {
       <div className="relative top-0 h-dvh w-screen overflow-y-scroll font-mono p-[4vw] sm:p-6 md:p-8 lg:p-9 xl:p-10 bg-[#212121] text-white">
         <div className="w-full max-w-6xl mx-auto">
           <header className="flex justify-between /text-gray-200">
-            <p className="text-xl">100 days of development</p>
+            <p className="text-xl">100 Development Logs</p>
             <div className="flex flex-col items-end text-base sm:text-lg">
               <p>
                 Start <span className="hidden sm:inline-block">date</span>:
@@ -135,7 +135,13 @@ function App() {
           <Menu day={4} date="3/7/24" />
           <Menu day={5} date="3/8/24" />
           <Menu day={6} date="3/11/24" />
-          <Menu day={7} date="3/12/24" />
+          <Menu day={7} date="3/14/24" />
+          <Menu day={8} date="3/15/24" />
+          <Menu day={9} date="3/18/24" />
+          {/* <Menu day={10} date="3/19/24" /> */}
+          {/* <Menu day={11} date="3/20/24" />
+          <Menu day={12} date="3/21/24" />
+          <Menu day={13} date="3/22/24" /> */}
         </div>
       </div>
     </>

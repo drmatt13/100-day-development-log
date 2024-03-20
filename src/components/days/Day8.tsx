@@ -550,7 +550,7 @@ public:
   // Portfolio Work
   {
     menu: "Portfolio Work",
-    description: "API Access Rate Architect: Full-Stack IaC Solution - Part 1",
+    description: "API Access Rate Architect Full-Stack IaC - Part 1",
     content: [
       {
         subMenu: "Context",
@@ -779,10 +779,10 @@ Resources:
             code: `
 Resources:
 # ...
-MyEventBus:
+EventBus:
   Type: "AWS::Events::EventBus"
   Properties:
-    Name: BackendEventBus
+    Name: ApiAccessRateFullStackEventBus
             `,
           },
           {
@@ -805,7 +805,7 @@ export const handler = async (event: PostConfirmationTriggerEvent) => {
   const params: PutEventsCommandInput = {
     Entries: [
       {
-        EventBusName: "BackendEventBus",
+        EventBusName: "ApiAccessRateFullStackEventBus",
         Source: "account.created",
         DetailType: "Account Created Detail Type",
         Detail: JSON.stringify({
@@ -853,7 +853,7 @@ Properties:
       - Effect: Allow
         Action:
           - events:PutEvents
-        Resource: !GetAtt MyEventBus.Arn
+        Resource: !GetAtt EventBus.Arn
   Roles:
     - !Ref PostConfirmationFunctionRole # This references the automatically generated IAM role for your Lambda function by SAM.
             `,

@@ -333,7 +333,7 @@ function isBalanced(root: TreeNode | null): boolean {
   // Portfolio Work
   {
     menu: "Portfolio Work",
-    description: "API Access Rate Architect: Full-Stack IaC Solution - Part 2",
+    description: "API Access Rate Architect Full-Stack IaC - Part 2",
     content: [
       {
         subMenu: "Context",

@@ -138,7 +138,7 @@ function App() {
           <Menu day={7} date="3/14/24" />
           <Menu day={8} date="3/15/24" />
           <Menu day={9} date="3/18/24" />
-          {/* <Menu day={10} date="3/19/24" /> */}
+          <Menu day={10} date="3/19/24" />
           {/* <Menu day={11} date="3/20/24" />
           <Menu day={12} date="3/21/24" />
           <Menu day={13} date="3/22/24" /> */}

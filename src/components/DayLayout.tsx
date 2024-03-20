@@ -170,9 +170,9 @@ const DayLayout = ({ data }: { data: Data }) => {
                                   onClick={() => setImage(image)}
                                   className={`${
                                     item.images?.length === 1
-                                      ? "w-max sm:h-64"
+                                      ? "w-max sm:max-h-64"
                                       : "w-96 sm:size-48"
-                                  } mt-2.5 object-cover rounded-lg mr-2.5 cursor-pointer border border-white/25`}
+                                  } max-h-full mt-2.5 object-cover rounded-lg mr-2.5 cursor-pointer border border-white/25`}
                                 />
                               ))}
                             </div>
